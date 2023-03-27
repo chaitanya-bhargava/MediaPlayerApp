@@ -1,4 +1,4 @@
-# Media Player
+# Media Player ▶
 This is a React App built using the concepts of React, React Router, CSS Grid, Iframes and Firebase is used as a Backend.<br/>
 A user can store and play their favourite youtube videos without redirecting through this application and also look at the history which lists the videos played in the past. 
 
