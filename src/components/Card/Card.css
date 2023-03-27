@@ -1,0 +1,59 @@
+.card{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: wheat;
+    margin:1rem;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+}
+.card-image{
+    cursor: pointer;
+    width: 40%;
+    margin:1rem;
+}
+.del{
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 2rem;
+}
+.move{
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 2rem;
+}
+.add-form{
+    display: flex;
+    margin:3rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.card-edit{
+    cursor: pointer;
+    padding: 5px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 2rem;
+}
+.history-card{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background-color: wheat;
+    margin:1rem;
+    padding: 5rem;
+    text-align: center;
+    position: relative;
+}
