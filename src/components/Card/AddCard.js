@@ -1,9 +1,13 @@
 import { useRef } from "react";
+import { useState } from "react";
+import ErrorText from "../ErrorModal/ErrorModal";
 import Button from "../Button/Button";
 
 const AddCard= props =>{
     const nameInputRef= useRef();
     const linkInputRef= useRef();
+    const [error,setError] = useState(false);
+    const [errorText,setErrorText] = useState("");
     async function addCardhandler(newCard){
         await fetch(`https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${props.id}/cards.json`,{
             method:'POST',
@@ -18,7 +22,14 @@ const AddCard= props =>{
         const enteredName=nameInputRef.current.value;
         const enteredLink=linkInputRef.current.value;
         if(enteredName==="" || enteredLink===""){
-            return
+            setErrorText("Please enter valid values!");
+            setError(true);
+            return;
+        }
+        if(!enteredLink.includes("www.youtube.com")){
+            setErrorText("Please enter youtube links only!");
+            setError(true);
+            return;
         }
         const newCard={
             name:enteredName,
@@ -27,6 +38,8 @@ const AddCard= props =>{
         }
         nameInputRef.current.value="";
         linkInputRef.current.value="";
+        setError(false);
+        setErrorText("");
         addCardhandler(newCard);
     }
     return (
@@ -34,6 +47,7 @@ const AddCard= props =>{
             <h3>Add Another Card!</h3>
             Name: <input ref={nameInputRef} name="name"/><br/>
             Link: <input ref={linkInputRef} name="link"/>
+            {error && <ErrorText text={errorText}/>}
             <Button text="ADD"/>
         </form>
     )

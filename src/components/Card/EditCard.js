@@ -1,9 +1,12 @@
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
-import { useRef } from "react";
+import ErrorText from "../ErrorModal/ErrorModal";
+import { useRef,useState } from "react";
 const EditCard = (props) => {
   const nameInputRef = useRef();
   const linkInputRef = useRef();
+  const [error,setError] = useState(false);
+  const [errorText,setErrorText] = useState("");
   async function editCardHandler(newCard,bucketid) {
     await fetch(
       `https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${bucketid}/cards/${props.card.id}.json`,
@@ -21,9 +24,16 @@ const EditCard = (props) => {
     event.preventDefault();
     const enteredName = nameInputRef.current.value;
     const enteredLink = linkInputRef.current.value;
-    if (enteredName === "" || enteredLink==="") {
+    if(enteredName==="" || enteredLink===""){
+      setErrorText("Please enter valid values!");
+      setError(true);
       return;
-    }
+  }
+  if(!enteredLink.includes("www.youtube.com")){
+      setErrorText("Please enter youtube links only!");
+      setError(true);
+      return;
+  }
     const newCard={
         name:enteredName,
         link:enteredLink,
@@ -38,6 +48,7 @@ const EditCard = (props) => {
       <form onSubmit={onSaveHandler}>
         New Name: <input name="name" ref={nameInputRef}/><br/>
         New Link: <input name="name" ref={linkInputRef}/>
+        {error && <ErrorText text={errorText}/>}
         <Button text="Save" type="submit" />
       </form>
       <Button text="Close!" onClick={props.onClose} />
