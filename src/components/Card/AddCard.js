@@ -26,8 +26,8 @@ const AddCard= props =>{
             setError(true);
             return;
         }
-        if(!enteredLink.includes("www.youtube.com")){
-            setErrorText("Please enter youtube links only!");
+        if(!enteredLink.includes("www.youtube.com/watch?v")){
+            setErrorText("Please enter youtube video links only!");
             setError(true);
             return;
         }
