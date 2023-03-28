@@ -30,7 +30,7 @@ const EditCard = (props) => {
       return;
   }
   if(!enteredLink.includes("www.youtube.com/watch?v") && !enteredLink.includes("youtu.be/") && !enteredLink.includes("m.youtube.com/watch?v")){
-      setErrorText("Please enter youtube video links only!");
+      setErrorText("Please enter complete youtube video links only!");
       setError(true);
       return;
   }
