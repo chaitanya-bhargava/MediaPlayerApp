@@ -19,6 +19,19 @@ a{
     text-decoration: none;
     color: blueviolet;
 }
+.home-signout{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10rem;
+}
+.home-signout button{
+    width: 30% !important
+}
+.home-signout button a{
+    color: black;
+}
 @media screen and (max-width:950px){
     .button-list{
         flex-direction: column;
@@ -26,5 +39,11 @@ a{
     .home-text{
         font-size: medium;
         width: 100%;
+    }
+    .home-signout button{
+        width: 50% !important
+    }
+    .home-signout button a{
+        color: black;
     }
 }

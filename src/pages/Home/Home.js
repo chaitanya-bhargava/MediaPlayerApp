@@ -6,6 +6,7 @@ import { auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { userSignIn,userSignOut } from "../../state/action-creaters";
+import { NavLink } from "react-router-dom";
 const Home = () => {
   const user = useSelector((state) => state.authReducer);
   const [buckets, setBuckets] = useState([]);
@@ -40,9 +41,10 @@ const Home = () => {
       </div>
     );
   } else {
-    return <div>
+    return <div className="home-signout">
       <h1>Welcome to Media Player!</h1>
       <h2>Sign Up or Log in to continue</h2>
+      <button className="custom-button"><NavLink to={'/auth'}>Sign Up/Log In</NavLink></button>
       </div>
   }
 };

@@ -74,4 +74,7 @@ nav a.active{
     .hide{
         opacity: 0;
     }
+    nav button{
+        width: 80% !important
+    }
 }
