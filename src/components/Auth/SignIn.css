@@ -19,3 +19,12 @@
     width: 50%;
 }
 
+@media screen and (max-width:950px){
+    .sign-in{
+        width: 100%;
+    }
+    .sign-in form{
+        width: 100%;
+    }
+}
+

@@ -18,3 +18,11 @@
     margin: 0.5rem;
     width: 50%;
 }
+@media screen and (max-width:950px){
+    .sign-up{
+        width: 100%;
+    }
+    .sign-up form{
+        width: 100%;
+    }
+}
