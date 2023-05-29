@@ -3,21 +3,21 @@ import MediaPlayer from "../MediaPlayer/MediaPlayer";
 import EditCard from "./EditCard";
 import { useState } from "react";
 import MoveCard from "./MoveCard";
+import { useSelector } from "react-redux";
+import {db} from "../../firebase";
+import { doc,deleteDoc, collection,addDoc } from "firebase/firestore";
+
 const Card = (props) => {
   const [mediaIsShown, setMediaIsShown] = useState(false);
   const [moveIsShown, setMoveIsShown] = useState(false);
   const [editIsShown, setEditIsShown] = useState(false);
+  const authUser = useSelector((state)=>state.authReducer)
   async function addHistoryHandler(newHistory) {
-    await fetch(
-      `https://internassignment-88d33-default-rtdb.firebaseio.com/history.json`,
-      {
-        method: "POST",
-        body: JSON.stringify(newHistory),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    await addDoc(collection(db, "users", authUser.uid,"history"), {
+      time:newHistory.time,
+      name:newHistory.name,
+      link:newHistory.link
+    });
   }
   const showMediaHandler = () => {
     setMediaIsShown(true);
@@ -48,12 +48,7 @@ const Card = (props) => {
   };
 
   async function onDeleteHandler() {
-    await fetch(
-      `https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${props.bucketid}/cards/${props.id}.json`,
-      {
-        method: "delete",
-      }
-    );
+      await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.bucketid}`,"cards",`${props.id}`));
   }
 
   const videolink = new URL(props.link);

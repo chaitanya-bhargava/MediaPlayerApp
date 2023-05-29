@@ -1,9 +1,11 @@
 import "./Card.css";
+import {db} from "../../firebase";
+import { useSelector } from "react-redux";
+import { doc,deleteDoc } from "firebase/firestore";
 const HistoryCard = (props) => {
+  const authUser=useSelector((state)=>state.authReducer)
     async function onDeleteHandler(){
-      await fetch(`https://internassignment-88d33-default-rtdb.firebaseio.com/history/${props.id}.json`,{
-        method:'delete',
-      })
+      await deleteDoc(doc(db, "users", authUser.uid,"history",`${props.id}`));
     }
   return (
     <div>

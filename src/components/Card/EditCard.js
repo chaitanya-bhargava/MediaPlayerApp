@@ -2,22 +2,19 @@ import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import ErrorText from "../ErrorModal/ErrorModal";
 import { useRef,useState } from "react";
+import { db } from "../../firebase";
+import { doc,updateDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+
 const EditCard = (props) => {
   const nameInputRef = useRef();
   const linkInputRef = useRef();
   const [error,setError] = useState(false);
   const [errorText,setErrorText] = useState("");
+  const authUser=useSelector((state)=>state.authReducer)
   async function editCardHandler(newCard,bucketid) {
-    await fetch(
-      `https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${bucketid}/cards/${props.card.id}.json`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(newCard),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const docRef = doc(db, "users",authUser.uid,"buckets",`${bucketid}`,"cards",`${props.card.id}`);
+    await updateDoc(docRef,newCard);
   }
 
   const onSaveHandler = (event) => {

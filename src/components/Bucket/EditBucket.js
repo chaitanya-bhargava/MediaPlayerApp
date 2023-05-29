@@ -2,21 +2,18 @@ import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import { useRef,useState } from "react";
 import ErrorText from "../ErrorModal/ErrorModal";
+import { updateDoc,doc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { db } from "../../firebase";
+
 const EditBucket = (props) => {
+  const authUser = useSelector((state)=>state.authReducer);
   const renameInputRef = useRef();
   const [error,setError] = useState(false);
   const [errorText,setErrorText] = useState("");
   async function editBucketHandler(newBucket,bucketid) {
-    await fetch(
-      `https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${bucketid}.json`,
-      {
-        method: "PATCH",
-        body: JSON.stringify(newBucket),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const docRef = doc(db, "users",authUser.uid,"buckets",`${bucketid}`);
+    await updateDoc(docRef,newBucket);
   }
   const onSaveHandler = (event) => {
     event.preventDefault();

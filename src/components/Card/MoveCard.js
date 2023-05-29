@@ -1,25 +1,22 @@
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import { useRef } from "react";
+import {db} from "../../firebase";
+import { doc,deleteDoc,setDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
 const MoveCard = (props) => {
   const destInputRef = useRef();
+  const authUser = useSelector((state)=>state.authReducer)
   async function addCardhandler(newCard,bucketid) {
-    await fetch(
-      `https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${bucketid}/cards.json`,
-      {
-        method: "POST",
-        body: JSON.stringify(newCard),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    await setDoc(doc(db, "users", authUser.uid,"buckets",`${bucketid}`,"cards",`${newCard.id}`), {
+      id:newCard.id,
+      name:newCard.name,
+      link:newCard.link
+    });
   }
 
   async function onDeleteHandler(){
-    await fetch(`https://internassignment-88d33-default-rtdb.firebaseio.com/buckets/${props.card.bucketid}/cards/${props.card.id}.json`,{
-      method:'delete',
-    })
+    await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.card.bucketid}`,"cards",`${props.card.id}`));
   }
 
   const onSaveHandler = (event) => {

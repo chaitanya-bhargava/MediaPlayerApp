@@ -4,6 +4,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
 import Heading from "../Heading/Heading";
 import Button from "../Button/Button";
+import { setDoc,doc, } from "firebase/firestore";
+import { db } from "../../firebase";
 import "./SignUp.css";
 const SignUp = () => {
     const emailInputRef= useRef();
@@ -14,7 +16,17 @@ const SignUp = () => {
         const enteredEmail=emailInputRef.current.value;
         const enteredPassword=passInputRef.current.value;
         const response=await createUserWithEmailAndPassword(auth,enteredEmail,enteredPassword);
-        console.log(response);
+        await setDoc(doc(db, "users", response.user.uid), {
+          email:enteredEmail
+        });
+        await setDoc(doc(db, "users", response.user.uid,"buckets","0"), {
+          id:"0",
+          name: "Entertainment Videos"
+        });
+        await setDoc(doc(db, "users", response.user.uid,"buckets","1"), {
+          id:"1",
+          name: "Educational Videos"
+        });
         emailInputRef.current.value="";
         passInputRef.current.value="";
         navigate('/');
