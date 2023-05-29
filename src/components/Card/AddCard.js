@@ -19,6 +19,11 @@ const AddCard = (props) => {
         link:newCard.link
       });
   }
+  function youtube_parser(url){
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    var match = url.match(regExp);
+    return (match&&match[7].length===11)? match[7] : false;
+}
   const onSubmitHandler = (event) => {
     event.preventDefault();
     const enteredName = nameInputRef.current.value;
@@ -29,8 +34,7 @@ const AddCard = (props) => {
       return;
     }
     if (
-      !enteredLink.includes("www.youtube.com/watch?v") &&
-      !enteredLink.includes("m.youtube.com/watch?v")
+      !youtube_parser(enteredLink)
     ) {
       setErrorText("Please enter complete youtube video links only!");
       setError(true);
