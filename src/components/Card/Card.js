@@ -50,9 +50,12 @@ const Card = (props) => {
   async function onDeleteHandler() {
       await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.bucketid}`,"cards",`${props.id}`));
   }
-
-  const videolink = new URL(props.link);
-  const videoid = videolink.searchParams.get("v");
+  function youtube_parser(url){
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    var match = url.match(regExp);
+    return (match&&match[7].length===11)? match[7] : false;
+}
+  const videoid=youtube_parser(props.link)
   return (
     <div>
       <div className="card">
