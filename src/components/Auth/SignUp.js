@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { auth } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
@@ -7,29 +7,57 @@ import Button from "../Button/Button";
 import { setDoc,doc, } from "firebase/firestore";
 import { db } from "../../firebase";
 import "./SignUp.css";
+import ErrorText from "../ErrorModal/ErrorModal";
 const SignUp = () => {
     const emailInputRef= useRef();
     const passInputRef= useRef();
     const navigate = useNavigate();
+    const [error, setError] = useState(false);
+    const [errorText,setErrorText] = useState("");
     async function onSubmitHandler(event){
         event.preventDefault();
         const enteredEmail=emailInputRef.current.value;
         const enteredPassword=passInputRef.current.value;
-        const response=await createUserWithEmailAndPassword(auth,enteredEmail,enteredPassword);
-        await setDoc(doc(db, "users", response.user.uid), {
-          email:enteredEmail
-        });
-        await setDoc(doc(db, "users", response.user.uid,"buckets","0"), {
-          id:"0",
-          name: "Entertainment Videos"
-        });
-        await setDoc(doc(db, "users", response.user.uid,"buckets","1"), {
-          id:"1",
-          name: "Educational Videos"
-        });
-        emailInputRef.current.value="";
-        passInputRef.current.value="";
-        navigate('/');
+        try{
+          const response=await createUserWithEmailAndPassword(auth,enteredEmail,enteredPassword);
+          await setDoc(doc(db, "users", response.user.uid), {
+            email:enteredEmail
+          });
+          await setDoc(doc(db, "users", response.user.uid,"buckets","0"), {
+            id:"0",
+            name: "Entertainment Videos"
+          });
+          await setDoc(doc(db, "users", response.user.uid,"buckets","1"), {
+            id:"1",
+            name: "Educational Videos"
+          });
+          await setDoc(doc(db, "users", response.user.uid,"buckets","2"), {
+            id:"2",
+            name: "Funny Videos"
+          });
+          await setDoc(doc(db, "users", response.user.uid,"buckets","3"), {
+            id:"3",
+            name: "Vlogs"
+          });
+          await setDoc(doc(db, "users", response.user.uid,"buckets","4"), {
+            id:"4",
+            name: "Product Reviews"
+          });
+          setError(false)
+          setErrorText("")
+          emailInputRef.current.value="";
+          passInputRef.current.value="";
+          navigate('/');
+        }
+        catch(err){
+          setError(true)
+          if(err.message==="Firebase: Error (auth/email-already-in-use)."){
+            setErrorText("Email already in use")
+          }
+          else if(err.message==="Firebase: Password should be at least 6 characters (auth/weak-password)."){
+            setErrorText("Password should be at least 6 characters long")
+          }
+        }
     }
   return (
     <div className="sign-up">
@@ -49,6 +77,7 @@ const SignUp = () => {
           ref={passInputRef}
           required
         />
+        {error && <ErrorText text={errorText}/>}
         <Button type="submit" text="Sign Up"/>
       </form>
     </div>

@@ -4,13 +4,16 @@ import AddCard from '../Card/AddCard';
 import { useState,useEffect } from "react";
 import './Bucket.css';
 import EditBucket from "./EditBucket";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../firebase";
 import { collection,getDocs,deleteDoc,doc } from "firebase/firestore";
+import { fetchBuckets } from "../../state/action-creaters";
+
 const Bucket=(props)=>{
   const authUser = useSelector((state)=>state.authReducer);
   const [editIsShown,setEditIsShown] = useState(false);
   const [data,setData] = useState([]);
+  const dispatch=useDispatch();
   useEffect(() => {
     const collectionsref = collection(db, "users",authUser.uid,"buckets",`${props.id}`,"cards");
     async function fetchData() {
@@ -38,6 +41,7 @@ const Bucket=(props)=>{
       for(let x of data){
         await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.id}`,"cards",x.id));
       }
+      await dispatch(fetchBuckets(authUser.uid));
     }
 
     return(

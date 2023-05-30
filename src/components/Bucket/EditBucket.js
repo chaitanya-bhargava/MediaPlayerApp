@@ -3,17 +3,20 @@ import Button from "../Button/Button";
 import { useRef,useState } from "react";
 import ErrorText from "../ErrorModal/ErrorModal";
 import { updateDoc,doc } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../firebase";
+import { fetchBuckets } from "../../state/action-creaters";
 
 const EditBucket = (props) => {
   const authUser = useSelector((state)=>state.authReducer);
   const renameInputRef = useRef();
+  const dispatch=useDispatch();
   const [error,setError] = useState(false);
   const [errorText,setErrorText] = useState("");
   async function editBucketHandler(newBucket,bucketid) {
     const docRef = doc(db, "users",authUser.uid,"buckets",`${bucketid}`);
     await updateDoc(docRef,newBucket);
+    await dispatch(fetchBuckets(authUser.uid));
   }
   const onSaveHandler = (event) => {
     event.preventDefault();
