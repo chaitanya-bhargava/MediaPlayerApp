@@ -1,6 +1,10 @@
-const reducer =(state = [], action) => {
+const reducer =(state = {}, action) => {
   if (action.type === "fetch-cards") {
-    return action.payload;
+    const new_state={
+      ...state,
+      [action.payload.bucketid]:action.payload.data
+    }
+    return new_state;
   }  else return state;
 };
 

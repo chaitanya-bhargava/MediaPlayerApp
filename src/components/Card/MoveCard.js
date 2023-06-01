@@ -3,20 +3,30 @@ import Button from "../Button/Button";
 import { useRef } from "react";
 import {db} from "../../firebase";
 import { doc,deleteDoc,setDoc } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCards } from "../../state/action-creaters";
 const MoveCard = (props) => {
   const destInputRef = useRef();
   const authUser = useSelector((state)=>state.authReducer)
+  const dispatch=useDispatch();
   async function addCardhandler(newCard,bucketid) {
     await setDoc(doc(db, "users", authUser.uid,"buckets",`${bucketid}`,"cards",`${newCard.id}`), {
       id:newCard.id,
       name:newCard.name,
       link:newCard.link
     });
+    await dispatch(fetchCards({
+      userID:authUser.uid,
+      bucketid:bucketid
+    }))
   }
 
   async function onDeleteHandler(){
     await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.card.bucketid}`,"cards",`${props.card.id}`));
+    await dispatch(fetchCards({
+      userID:authUser.uid,
+      bucketid:props.card.bucketid
+    }))
   }
 
   const onSaveHandler = (event) => {

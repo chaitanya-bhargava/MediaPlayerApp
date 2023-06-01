@@ -1,7 +1,7 @@
 
 const Heading =(props)=>{
     return <header>
-        <h2>{props.text}</h2>
+        <h3>{props.text}</h3>
     </header>
 }
 

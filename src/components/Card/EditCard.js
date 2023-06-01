@@ -4,7 +4,8 @@ import ErrorText from "../ErrorModal/ErrorModal";
 import { useRef,useState } from "react";
 import { db } from "../../firebase";
 import { doc,updateDoc } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCards } from "../../state/action-creaters";
 
 const EditCard = (props) => {
   const nameInputRef = useRef();
@@ -12,9 +13,14 @@ const EditCard = (props) => {
   const [error,setError] = useState(false);
   const [errorText,setErrorText] = useState("");
   const authUser=useSelector((state)=>state.authReducer)
+  const dispatch=useDispatch();
   async function editCardHandler(newCard,bucketid) {
     const docRef = doc(db, "users",authUser.uid,"buckets",`${bucketid}`,"cards",`${props.card.id}`);
     await updateDoc(docRef,newCard);
+    await dispatch(fetchCards({
+      userID:authUser.uid,
+      bucketid:bucketid
+    }))
   }
 
   const onSaveHandler = (event) => {

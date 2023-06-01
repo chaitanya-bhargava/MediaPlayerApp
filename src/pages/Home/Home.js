@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { fetchBuckets, userSignIn, userSignOut } from "../../state/action-creaters";
 import { NavLink } from "react-router-dom";
+import Heading from "../../components/Heading/Heading";
 const Home = () => {
   const authUser = useSelector((state) => state.authReducer);
   const buckets = useSelector((state)=>state.fetchBucketsReducer);
@@ -28,6 +29,7 @@ const Home = () => {
     return (
       <div className="home">
         <h1>Home</h1>
+        <Heading text={`Welcome ${authUser.email}!`}/>
         <BucketList list={buckets}/>
       </div>
     );

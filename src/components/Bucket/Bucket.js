@@ -6,29 +6,21 @@ import './Bucket.css';
 import EditBucket from "./EditBucket";
 import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../firebase";
-import { collection,getDocs,deleteDoc,doc } from "firebase/firestore";
-import { fetchBuckets } from "../../state/action-creaters";
+import { deleteDoc,doc } from "firebase/firestore";
+import { fetchCards } from "../../state/action-creaters";
 
 const Bucket=(props)=>{
   const authUser = useSelector((state)=>state.authReducer);
   const [editIsShown,setEditIsShown] = useState(false);
-  const [data,setData] = useState([]);
+  const allCards=useSelector((state)=>state.fetchCardsReducer);
+  const cards=allCards[`${props.id}`]
   const dispatch=useDispatch();
   useEffect(() => {
-    const collectionsref = collection(db, "users",authUser.uid,"buckets",`${props.id}`,"cards");
-    async function fetchData() {
-      const querySnapshot = await getDocs(collectionsref);
-        const data=querySnapshot.docs.map((doc)=>{
-          return {
-            id:doc._document.data.value.mapValue.fields.id.stringValue,
-            name:doc._document.data.value.mapValue.fields.name.stringValue,
-            link:doc._document.data.value.mapValue.fields.link.stringValue,
-          }
-        })
-        setData(data);
-      }
-      fetchData();
-    }, [authUser,props]);
+    dispatch(fetchCards({
+      userID:authUser.uid,
+      bucketid:props.id
+    }))
+    }, [authUser,props,dispatch]);
     const showEditHandler = () => {
       setEditIsShown(true);
     }
@@ -38,10 +30,13 @@ const Bucket=(props)=>{
     }
 
     async function onClearHandler(){
-      for(let x of data){
+      for(let x of cards){
         await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.id}`,"cards",x.id));
       }
-      await dispatch(fetchBuckets(authUser.uid));
+      await dispatch(fetchCards({
+        userID:authUser.uid,
+        bucketid:props.id
+      }));
     }
 
     return(
@@ -49,7 +44,7 @@ const Bucket=(props)=>{
         <img className="edit" src="edit.png" alt="edit" onClick={showEditHandler}/>
         <img className="clear" src="broom.png" alt="clear" onClick={onClearHandler}/>
         <Heading text={props.text}/>
-        <CardGrid bucketlist={props.bucketlist} bucketid={props.id} list={data}/>
+        {cards && <CardGrid bucketlist={props.bucketlist} bucketid={props.id} list={cards}/>}
         <AddCard id={props.id}/>
         {editIsShown && <EditBucket onClose={hideEditHandler} bucketid={props.id}/>}
         </div>

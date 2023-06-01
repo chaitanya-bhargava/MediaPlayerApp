@@ -18,7 +18,6 @@ export const userSignIn = (user) => {
 export const fetchBuckets = (userID) => {
   return async (dispatch) => {
     const collectionsref = collection(db, "users", userID, "buckets");
-    console.log("HELLO1");
     const querySnapshot = await getDocs(collectionsref);
     const data = querySnapshot.docs.map((doc) => {
       return {
@@ -42,7 +41,6 @@ export const fetchCards = (props) => {
       `${props.bucketid}`,
       "cards"
     );
-    console.log("HELLO2");
     const querySnapshot = await getDocs(collectionsref);
     const data = querySnapshot.docs.map((doc) => {
       return {
@@ -53,14 +51,16 @@ export const fetchCards = (props) => {
     });
     dispatch({
       type: "fetch-cards",
-      payload: data,
+      payload: {
+        data,
+        bucketid:props.bucketid
+      },
     });
   };
 };
 export const fetchHistory = (userID) => {
   return async (dispatch) => {
     const collectionsref = collection(db, "users", userID, "history");
-    console.log("HELLO3");
     const querySnapshot = await getDocs(collectionsref);
     const data = querySnapshot.docs.map((doc) => {
       return {

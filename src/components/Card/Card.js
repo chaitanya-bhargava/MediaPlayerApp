@@ -3,15 +3,17 @@ import MediaPlayer from "../MediaPlayer/MediaPlayer";
 import EditCard from "./EditCard";
 import { useState } from "react";
 import MoveCard from "./MoveCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {db} from "../../firebase";
 import { doc,deleteDoc, collection,addDoc } from "firebase/firestore";
+import { fetchCards } from "../../state/action-creaters";
 
 const Card = (props) => {
   const [mediaIsShown, setMediaIsShown] = useState(false);
   const [moveIsShown, setMoveIsShown] = useState(false);
   const [editIsShown, setEditIsShown] = useState(false);
   const authUser = useSelector((state)=>state.authReducer)
+  const dispatch=useDispatch();
   async function addHistoryHandler(newHistory) {
     await addDoc(collection(db, "users", authUser.uid,"history"), {
       time:newHistory.time,
@@ -49,6 +51,10 @@ const Card = (props) => {
 
   async function onDeleteHandler() {
       await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.bucketid}`,"cards",`${props.id}`));
+      await dispatch(fetchCards({
+        userID:authUser.uid,
+        bucketid:props.bucketid
+      }))
   }
   function youtube_parser(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;

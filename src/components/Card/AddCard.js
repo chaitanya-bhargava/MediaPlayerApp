@@ -4,7 +4,8 @@ import ErrorText from "../ErrorModal/ErrorModal";
 import Button from "../Button/Button";
 import {db} from "../../firebase";
 import { setDoc,doc } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCards } from "../../state/action-creaters";
 
 const AddCard = (props) => {
   const authUser = useSelector((state)=>state.authReducer);
@@ -12,12 +13,17 @@ const AddCard = (props) => {
   const linkInputRef = useRef();
   const [error, setError] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const dispatch=useDispatch();
   async function addCardhandler(newCard) {
     await setDoc(doc(db, "users", authUser.uid,"buckets",`${props.id}`,"cards",`${newCard.id}`), {
         id:newCard.id,
         name:newCard.name,
         link:newCard.link
       });
+    await dispatch(fetchCards({
+      userID:authUser.uid,
+      bucketid:props.id
+    }))
   }
   function youtube_parser(url){
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
