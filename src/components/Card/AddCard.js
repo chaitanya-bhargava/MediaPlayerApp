@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useState } from "react";
-import ErrorText from "../ErrorModal/ErrorModal";
+import ErrorText from "../ErrorText/ErrorText";
 import Button from "../Button/Button";
 import {db} from "../../firebase";
 import { setDoc,doc } from "firebase/firestore";

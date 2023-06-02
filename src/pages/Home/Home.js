@@ -38,9 +38,7 @@ const Home = () => {
       <div className="home-signout">
         <h1>Welcome to Media Player!</h1>
         <h2>Sign Up or Log in to continue</h2>
-        <button className="custom-button">
-          <NavLink to={"/auth"}>Sign Up/Log In</NavLink>
-        </button>
+        <NavLink to={"/auth"} className="custom-button">Sign Up/Log in</NavLink>
       </div>
     );
   }

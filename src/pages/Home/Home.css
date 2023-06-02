@@ -26,10 +26,8 @@ a{
     align-items: center;
     padding-top: 10rem;
 }
-.home-signout button{
-    width: 30% !important
-}
-.home-signout button a{
+.home-signout a{
+    width: 30% !important;
     color: black;
 }
 @media screen and (max-width:950px){
@@ -40,10 +38,8 @@ a{
         font-size: medium;
         width: 100%;
     }
-    .home-signout button{
-        width: 50% !important
-    }
-    .home-signout button a{
+    .home-signout a{
+        width: 30% !important;
         color: black;
     }
 }

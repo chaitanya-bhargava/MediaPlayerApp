@@ -1,6 +1,6 @@
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
-import ErrorText from "../ErrorModal/ErrorModal";
+import ErrorText from "../ErrorText/ErrorText";
 import { useRef,useState } from "react";
 import { db } from "../../firebase";
 import { doc,updateDoc } from "firebase/firestore";

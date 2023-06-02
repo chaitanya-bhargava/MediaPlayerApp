@@ -1,7 +1,7 @@
 import Modal from "../Modal/Modal";
 import Button from "../Button/Button";
 import { useRef,useState } from "react";
-import ErrorText from "../ErrorModal/ErrorModal";
+import ErrorText from "../ErrorText/ErrorText";
 import { updateDoc,doc } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { db } from "../../firebase";

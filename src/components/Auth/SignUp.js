@@ -7,15 +7,18 @@ import Button from "../Button/Button";
 import { setDoc,doc, } from "firebase/firestore";
 import { db } from "../../firebase";
 import "./SignUp.css";
-import ErrorText from "../ErrorModal/ErrorModal";
+import ErrorText from "../ErrorText/ErrorText";
+
 const SignUp = () => {
     const emailInputRef= useRef();
     const passInputRef= useRef();
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [errorText,setErrorText] = useState("");
+    const [loading,setLoading] = useState(false);
     async function onSubmitHandler(event){
         event.preventDefault();
+        setLoading(true);
         const enteredEmail=emailInputRef.current.value;
         const enteredPassword=passInputRef.current.value;
         try{
@@ -47,6 +50,7 @@ const SignUp = () => {
           setErrorText("")
           emailInputRef.current.value="";
           passInputRef.current.value="";
+          setLoading(false)
           navigate('/');
         }
         catch(err){
@@ -57,6 +61,7 @@ const SignUp = () => {
           else if(err.message==="Firebase: Password should be at least 6 characters (auth/weak-password)."){
             setErrorText("Password should be at least 6 characters long")
           }
+          setLoading(false)
         }
     }
   return (
@@ -78,7 +83,8 @@ const SignUp = () => {
           required
         />
         {error && <ErrorText text={errorText}/>}
-        <Button type="submit" text="Sign Up"/>
+        {loading && <img className="loading" src="loading.gif" alt="loading"/>}
+        {!loading && <Button type="submit" text="Sign Up"/>}
       </form>
     </div>
   );

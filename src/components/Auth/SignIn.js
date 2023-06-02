@@ -4,16 +4,18 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
 import Heading from "../Heading/Heading";
 import Button from "../Button/Button";
-import ErrorText from "../ErrorModal/ErrorModal";
+import ErrorText from "../ErrorText/ErrorText";
 import "./SignIn.css"
 const SignIn = () => {
-    const emailInputRef= useRef();
-    const passInputRef= useRef();
-    const [error, setError] = useState(false);
-    const [errorText,setErrorText] = useState("");
-    const navigate = useNavigate();
+  const emailInputRef= useRef();
+  const passInputRef= useRef();
+  const [error, setError] = useState(false);
+  const [errorText,setErrorText] = useState("");
+  const navigate = useNavigate();
+  const [loading,setLoading] = useState(false);
     async function onSubmitHandler(event){
         event.preventDefault();
+        setLoading(true)
         const enteredEmail=emailInputRef.current.value;
         const enteredPassword=passInputRef.current.value;
         try{
@@ -22,6 +24,7 @@ const SignIn = () => {
           setErrorText("")
           emailInputRef.current.value="";
           passInputRef.current.value="";
+          setLoading(false)
           navigate('/');
         }  
         catch(err){
@@ -33,6 +36,7 @@ const SignIn = () => {
           else if(err.message==="Firebase: Error (auth/wrong-password)."){
             setErrorText("Invalid Credentials")
           }
+          setLoading(false)
         }
     }
   return (
@@ -54,7 +58,8 @@ const SignIn = () => {
           required
         />
         {error && <ErrorText text={errorText}/>}
-        <Button type="submit" text="Sign In"/>
+        {loading && <img className="loading" src="loading.gif" alt="loading"/>}
+        {!loading && <Button type="submit" text="Sign In"/>}
       </form>
     </div>
   );

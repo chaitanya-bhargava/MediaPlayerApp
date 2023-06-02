@@ -1,4 +1,4 @@
-import './ErrorModal.css'
+import './ErrorText.css'
 const ErrorText = (props) => {
 return (
     <p className='error-text'>{props.text}</p>
