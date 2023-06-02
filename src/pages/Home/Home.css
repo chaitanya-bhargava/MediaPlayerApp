@@ -45,4 +45,7 @@ a{
         width: 30% !important;
         color: black;
     }
+    body{
+        background-size: 100%;
+    }
 }
