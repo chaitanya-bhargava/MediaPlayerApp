@@ -30,6 +30,9 @@ a{
     width: 30% !important;
     color: black;
 }
+.mediaplayer-span{
+    color: red;
+}
 @media screen and (max-width:950px){
     .button-list{
         flex-direction: column;

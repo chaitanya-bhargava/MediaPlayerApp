@@ -8,6 +8,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   background-color: whitesmoke;
+  background-image: url('../public/background.jpg');
+  background-blend-mode:overlay;
+  background-size: 20%;
 }
 
 code {

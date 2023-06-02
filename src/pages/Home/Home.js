@@ -36,7 +36,7 @@ const Home = () => {
   } else {
     return (
       <div className="home-signout">
-        <h1>Welcome to Media Player!</h1>
+        <h1>Welcome to <span className="mediaplayer-span">Media Player</span>!</h1>
         <h2>Sign Up or Log in to continue</h2>
         <NavLink to={"/auth"} className="custom-button">Sign Up/Log in</NavLink>
       </div>
