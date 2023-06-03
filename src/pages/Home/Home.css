@@ -31,7 +31,7 @@ a{
     color: black;
 }
 .mediaplayer-span{
-    color: red;
+    color: #6ab187;
 }
 @media screen and (max-width:950px){
     .button-list{

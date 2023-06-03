@@ -12,6 +12,7 @@ import ErrorText from "../ErrorText/ErrorText";
 const SignUp = () => {
     const emailInputRef= useRef();
     const passInputRef= useRef();
+    const passInputRef2= useRef();
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [errorText,setErrorText] = useState("");
@@ -21,7 +22,11 @@ const SignUp = () => {
         setLoading(true);
         const enteredEmail=emailInputRef.current.value;
         const enteredPassword=passInputRef.current.value;
+        const enteredPassword2=passInputRef2.current.value;
         try{
+          if(enteredPassword!==enteredPassword2){
+            throw new Error("Passwords do not match")
+          }
           const response=await createUserWithEmailAndPassword(auth,enteredEmail,enteredPassword);
           await setDoc(doc(db, "users", response.user.uid), {
             email:enteredEmail
@@ -50,6 +55,7 @@ const SignUp = () => {
           setErrorText("")
           emailInputRef.current.value="";
           passInputRef.current.value="";
+          passInputRef2.current.value="";
           setLoading(false)
           navigate('/');
         }
@@ -60,6 +66,9 @@ const SignUp = () => {
           }
           else if(err.message==="Firebase: Password should be at least 6 characters (auth/weak-password)."){
             setErrorText("Password should be at least 6 characters long")
+          }
+          else{
+            setErrorText(err.message)
           }
           setLoading(false)
         }
@@ -80,6 +89,13 @@ const SignUp = () => {
           placeholder="Enter Password"
           name="password"
           ref={passInputRef}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          name="password"
+          ref={passInputRef2}
           required
         />
         {error && <ErrorText text={errorText}/>}

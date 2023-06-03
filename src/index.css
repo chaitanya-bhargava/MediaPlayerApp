@@ -7,9 +7,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  background-color: whitesmoke;
+  background-color: rgb(245, 245, 245,1);
   background-image: url('../public/background.jpg');
-  background-blend-mode:overlay;
+  background-blend-mode:lighten;
   background-size: 20%;
 }
 
