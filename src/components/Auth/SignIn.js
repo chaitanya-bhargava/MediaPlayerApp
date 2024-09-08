@@ -1,11 +1,12 @@
 import { useRef,useState } from "react";
-import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../firebase";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router";
 import Heading from "../Heading/Heading";
 import Button from "../Button/Button";
 import ErrorText from "../ErrorText/ErrorText";
 import "./SignIn.css"
+import { doc, setDoc } from "firebase/firestore";
 const SignIn = () => {
   const emailInputRef= useRef();
   const passInputRef= useRef();
@@ -39,6 +40,37 @@ const SignIn = () => {
           setLoading(false)
         }
     }
+    const handleGuestLogin = async () => {
+      setLoading(true);
+      const guestEmail = `guest_${Math.random().toString(36).substring(7)}@example.com`;
+    
+      const response=await createUserWithEmailAndPassword(auth,guestEmail,Math.random().toString(36).substring(7));
+            await setDoc(doc(db, "users", response.user.uid), {
+              email:guestEmail
+            });
+            await setDoc(doc(db, "users", response.user.uid,"buckets","0"), {
+              id:"0",
+              name: "Entertainment Videos"
+            });
+            await setDoc(doc(db, "users", response.user.uid,"buckets","1"), {
+              id:"1",
+              name: "Educational Videos"
+            });
+            await setDoc(doc(db, "users", response.user.uid,"buckets","2"), {
+              id:"2",
+              name: "Funny Videos"
+            });
+            await setDoc(doc(db, "users", response.user.uid,"buckets","3"), {
+              id:"3",
+              name: "Vlogs"
+            });
+            await setDoc(doc(db, "users", response.user.uid,"buckets","4"), {
+              id:"4",
+              name: "Product Reviews"
+            });
+            setLoading(false)
+            navigate('/');
+    };
   return (
     <div className="sign-in">
       <Heading text="Sign In"/>
@@ -60,6 +92,7 @@ const SignIn = () => {
         {error && <ErrorText text={errorText}/>}
         {loading && <img className="loading" src="loading.gif" alt="loading"/>}
         {!loading && <Button type="submit" text="Sign In"/>}
+        {!loading && <Button onClick={handleGuestLogin} text="Guest Login"/>}
       </form>
     </div>
   );

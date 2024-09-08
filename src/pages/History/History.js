@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 const History = () => {
     const dispatch = useDispatch();
     const history = useSelector((state) => state.fetchHistoryReducer);
-    console.log(history)
     useEffect(() => {
       const listen = onAuthStateChanged(auth, (user) => {
         if (user) {
