@@ -42,9 +42,9 @@ const SignIn = () => {
     }
     const handleGuestLogin = async () => {
       setLoading(true);
-      const guestEmail = `guest_${Math.random().toString(36).substring(7)}@example.com`;
+      const guestEmail = `guest_${Math.random().toString(36).substring(2, 10)}@example.com`;
     
-      const response=await createUserWithEmailAndPassword(auth,guestEmail,Math.random().toString(36).substring(7));
+      const response=await createUserWithEmailAndPassword(auth,guestEmail,Math.random().toString(36).substring(2, 10));
             await setDoc(doc(db, "users", response.user.uid), {
               email:guestEmail
             });
