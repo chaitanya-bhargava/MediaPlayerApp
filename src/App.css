@@ -1,7 +1,1 @@
-@import url('https://fonts.googleapis.com/css2?family=Dosis:wght@500&display=swap');
-*{
-    font-family: 'Dosis';
-}
-* form input {
-    width: 70%;
-}
+/* App-level overrides are now handled by Tailwind — this file is intentionally minimal */

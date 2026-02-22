@@ -1,63 +1,87 @@
-import Modal from "../Modal/Modal";
-import Button from "../Button/Button";
-import { useRef } from "react";
-import {db} from "../../firebase";
-import { doc,deleteDoc,setDoc } from "firebase/firestore";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCards } from "../../state/action-creaters";
-const MoveCard = (props) => {
-  const destInputRef = useRef();
-  const authUser = useSelector((state)=>state.authReducer)
-  const dispatch=useDispatch();
-  async function addCardhandler(newCard,bucketid) {
-    await setDoc(doc(db, "users", authUser.uid,"buckets",`${bucketid}`,"cards",`${newCard.id}`), {
-      id:newCard.id,
-      name:newCard.name,
-      link:newCard.link
-    });
-    await dispatch(fetchCards({
-      userID:authUser.uid,
-      bucketid:bucketid
-    }))
+import { createCard, deleteCard } from "../../services/firestore";
+import { fetchCards } from "../../state/slices/cardsSlice";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "../ui/select";
+import { toast } from "sonner";
+
+const MoveCard = ({ open, onClose, bucketlist, card }) => {
+  const [dest, setDest] = useState("");
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
+  const destinations = bucketlist.filter((b) => b.id !== card.bucketId);
+
+  async function handleMove(e) {
+    e.preventDefault();
+    if (!dest) return;
+
+    try {
+      await createCard(user.uid, dest, {
+        id: card.id,
+        name: card.name,
+        link: card.link,
+      });
+      await deleteCard(user.uid, card.bucketId, card.id);
+      dispatch(fetchCards({ userId: user.uid, bucketId: card.bucketId }));
+      dispatch(fetchCards({ userId: user.uid, bucketId: dest }));
+      const destName = bucketlist.find((b) => b.id === dest)?.name;
+      toast.success(`Moved "${card.name}" to ${destName}`);
+      onClose();
+    } catch {
+      toast.error("Failed to move video.");
+    }
   }
 
-  async function onDeleteHandler(){
-    await deleteDoc(doc(db, "users", authUser.uid,"buckets",`${props.card.bucketid}`,"cards",`${props.card.id}`));
-    await dispatch(fetchCards({
-      userID:authUser.uid,
-      bucketid:props.card.bucketid
-    }))
-  }
-
-  const onSaveHandler = (event) => {
-    event.preventDefault();
-    const enteredDest = destInputRef.current.value;
-    if (enteredDest === "") {
-      return;
-    }
-    const newCard={
-        id:props.card.id,
-        name:props.card.name,
-        link:props.card.link
-    }
-    addCardhandler(newCard,destInputRef.current.value);
-    onDeleteHandler();
-    destInputRef.current.value = "";
-    props.onClose();
-  };
   return (
-    <Modal onClose={props.onClose}>
-      <form onSubmit={onSaveHandler}>
-        Move Card to:
-        <select ref={destInputRef} id="cars" name="dest">
-        {props.bucketlist.map((item) => (
-          <option value={item.id}>{item.name}</option>
-      ))}
-        </select>
-        <Button text="Save" type="submit" />
-      </form>
-      <Button text="Close!" onClick={props.onClose} />
-    </Modal>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Move Video</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleMove} className="space-y-4">
+          <div className="space-y-2">
+            <Label>Destination Collection</Label>
+            <Select value={dest} onValueChange={setDest}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a collection" />
+              </SelectTrigger>
+              <SelectContent>
+                {destinations.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!dest}>
+              Move
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
+
 export default MoveCard;

@@ -1,42 +1,34 @@
-import HistoryCard from '../Card/HistoryCard';
-import Card from '../Card/Card';
-import './CardGrid.css';
-const CardGrid = (props) => {
-  if(props.list.length===0){
-    return <div> Nothing to display! </div>
-  }
-  if(props.type==="history"){
-    return (
-      <div className="grid hgrid">
-      {props.list.map((item) => (
-        <HistoryCard
-        key={item.id}
-        id={item.id}
-        name={item.name}
-        link={item.link}
-        time={item.time}
-        />
-        ))}
-    </div>
-  );
-  }
-  else{
+import { useState, useEffect } from "react";
+import Card from "../Card/Card";
+import {
+  SortableContext,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 
-    return (
-      <div className="grid">
-      {props.list.map((item) => (
-        <Card
-        key={item.id}
-        bucketlist={props.bucketlist}
-        bucketid={props.bucketid}
-        id={item.id}
-        name={item.name}
-        link={item.link}
-        image='play.png'
-        />
+const CardGrid = ({ cards, bucketId, bucketlist }) => {
+  const [orderedCards, setOrderedCards] = useState(cards);
+
+  useEffect(() => {
+    setOrderedCards(cards);
+  }, [cards]);
+
+  return (
+    <SortableContext
+      items={orderedCards.map((c) => c.id)}
+      strategy={rectSortingStrategy}
+    >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {orderedCards.map((item) => (
+          <Card
+            key={item.id}
+            bucketlist={bucketlist}
+            bucketId={bucketId}
+            {...item}
+          />
         ))}
-    </div>
+      </div>
+    </SortableContext>
   );
-}
 };
+
 export default CardGrid;

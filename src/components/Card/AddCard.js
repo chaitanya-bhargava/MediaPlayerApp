@@ -1,71 +1,98 @@
-import { useRef } from "react";
-import { useState } from "react";
-import ErrorText from "../ErrorText/ErrorText";
-import Button from "../Button/Button";
-import {db} from "../../firebase";
-import { setDoc,doc } from "firebase/firestore";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCards } from "../../state/action-creaters";
+import { createCard } from "../../services/firestore";
+import { fetchCards } from "../../state/slices/cardsSlice";
+import { isValidYoutubeUrl } from "../../utils/youtube";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Alert, AlertDescription } from "../ui/alert";
+import { AlertCircle, Plus, X } from "lucide-react";
+import { toast } from "sonner";
 
-const AddCard = (props) => {
-  const authUser = useSelector((state)=>state.authReducer);
-  const nameInputRef = useRef();
-  const linkInputRef = useRef();
-  const [error, setError] = useState(false);
-  const [errorText, setErrorText] = useState("");
-  const dispatch=useDispatch();
-  async function addCardhandler(newCard) {
-    await setDoc(doc(db, "users", authUser.uid,"buckets",`${props.id}`,"cards",`${newCard.id}`), {
-        id:newCard.id,
-        name:newCard.name,
-        link:newCard.link
-      });
-    await dispatch(fetchCards({
-      userID:authUser.uid,
-      bucketid:props.id
-    }))
-  }
-  function youtube_parser(url){
-    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    var match = url.match(regExp);
-    return (match&&match[7].length===11)? match[7] : false;
-}
-  const onSubmitHandler = (event) => {
-    event.preventDefault();
-    const enteredName = nameInputRef.current.value;
-    const enteredLink = linkInputRef.current.value;
-    if (enteredName === "" || enteredLink === "") {
-      setErrorText("Please enter valid values!");
-      setError(true);
+const AddCard = ({ id, onDone }) => {
+  const nameRef = useRef();
+  const linkRef = useRef();
+  const [error, setError] = useState("");
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const enteredName = nameRef.current.value.trim();
+    const enteredLink = linkRef.current.value.trim();
+
+    if (!enteredName || !enteredLink) {
+      setError("Name and link are required.");
       return;
     }
-    if (
-      !youtube_parser(enteredLink)
-    ) {
-      setErrorText("Please enter complete youtube video links only!");
-      setError(true);
+    if (!isValidYoutubeUrl(enteredLink)) {
+      setError("Please enter a valid YouTube URL.");
       return;
     }
-    const newId=Math.floor(Math.random() * 99999999999)
+
     const newCard = {
+      id: String(Date.now()),
       name: enteredName,
       link: enteredLink,
-      id: String(newId)
     };
-    nameInputRef.current.value = "";
-    linkInputRef.current.value = "";
-    setError(false);
-    setErrorText("");
-    addCardhandler(newCard);
-  };
+
+    try {
+      await createCard(user.uid, id, newCard);
+      dispatch(fetchCards({ userId: user.uid, bucketId: id }));
+      nameRef.current.value = "";
+      linkRef.current.value = "";
+      setError("");
+      toast.success(`"${enteredName}" added!`);
+      if (onDone) onDone();
+    } catch {
+      toast.error("Failed to add video.");
+    }
+  }
+
   return (
-    <form onSubmit={onSubmitHandler} className="add-form">
-      <h3>Add Another Video!</h3>
-      Name: <input ref={nameInputRef} name="name" />
-      <br />
-      Link: <input ref={linkInputRef} name="link" />
-      {error && <ErrorText text={errorText} />}
-      <Button text="ADD" />
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-lg border border-dashed bg-muted/30 p-4"
+    >
+      <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+        <div className="space-y-1">
+          <Label htmlFor={`name-${id}`} className="text-xs">
+            Video Name
+          </Label>
+          <Input
+            id={`name-${id}`}
+            ref={nameRef}
+            placeholder="My awesome video"
+          />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor={`link-${id}`} className="text-xs">
+            YouTube URL
+          </Label>
+          <Input
+            id={`link-${id}`}
+            ref={linkRef}
+            placeholder="https://youtube.com/watch?v=..."
+          />
+        </div>
+        <div className="flex items-end gap-2">
+          <Button type="submit" size="sm">
+            <Plus className="mr-1 h-4 w-4" /> Add
+          </Button>
+          {onDone && (
+            <Button type="button" variant="ghost" size="sm" onClick={onDone}>
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+      {error && (
+        <Alert variant="destructive" className="mt-3">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
     </form>
   );
 };
